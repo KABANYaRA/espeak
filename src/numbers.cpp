@@ -581,8 +581,8 @@ int TranslateLetter(Translator *tr, char *word, char *phonemes, int control)
 
 	int letter;
 	char capital[20];
-	char ph_buf[60];
-	char ph_buf2[60];
+	char ph_buf[80];
+	char ph_buf2[80];
 	char hexbuf[6];
 
 	ph_buf[0] = 0;
@@ -633,22 +633,49 @@ int TranslateLetter(Translator *tr, char *word, char *phonemes, int control)
 	if(ph_buf[0] == 0)
 	{
 		// character name not found
-		if(iswalpha(letter))
-			Lookup(tr, "_?A", ph_buf);
-
-		if((ph_buf[0]==0) && !iswspace(letter))
-			Lookup(tr, "_??", ph_buf);
-
-		if(ph_buf[0] != 0)
+		if((letter >= 0x2800) && (letter <= 0x28ff))
 		{
-			// speak the hexadecimal number of the character code
-			sprintf(hexbuf,"%x",letter);
-			char *pbuf = ph_buf;
-			for(char *p2 = hexbuf; *p2 != 0; p2++)
+			// braille dots symbol
+			Lookup(tr, "_braille", ph_buf);
+			if(ph_buf[0] == 0)
 			{
-				pbuf += strlen(pbuf);
-				*pbuf++ = phonPAUSE_VSHORT;
-				LookupLetter(tr, *p2, 0, pbuf, 1);
+				EncodePhonemes("br'e:l", ph_buf, NULL);
+			}
+
+			if(ph_buf[0] != 0)
+			{
+				char *pbuf = ph_buf + strlen(ph_buf);
+				for(int ix=0; ix<8; ix++)
+				{
+					if(letter & (1 << ix))
+					{
+						*pbuf++ = phonPAUSE_VSHORT;
+						LookupLetter(tr, '1'+ix, 0, pbuf, 1);
+						pbuf += strlen(pbuf);
+					}
+				}
+			}
+		}
+
+		if(ph_buf[0]== 0)
+		{
+			if(iswalpha(letter))
+				Lookup(tr, "_?A", ph_buf);
+
+			if((ph_buf[0]==0) && !iswspace(letter))
+				Lookup(tr, "_??", ph_buf);
+	
+			if(ph_buf[0] != 0)
+			{
+				// speak the hexadecimal number of the character code
+				sprintf(hexbuf,"%x",letter);
+				char *pbuf = ph_buf;
+				for(char *p2 = hexbuf; *p2 != 0; p2++)
+				{
+					pbuf += strlen(pbuf);
+					*pbuf++ = phonPAUSE_VSHORT;
+					LookupLetter(tr, *p2, 0, pbuf, 1);
+				}
 			}
 		}
 	}
@@ -1903,3 +1930,18 @@ int TranslateNumber(Translator *tr, char *word, char *ph_out, unsigned int *flag
 		dictionary_skipwords = skipwords;
 	return(1);
 }  // end of TranslateNumber_1
+
+
+
+int TranslateNumber(Translator *tr, char *word1, char *ph_out, unsigned int *flags, WORD_TAB *wtab, int control)
+{//=============================================================================================================
+	if((option_sayas == SAYAS_DIGITS1) || (wtab[0].flags & FLAG_INDIVIDUAL_DIGITS))
+		return(0);  // speak digits individually
+
+	if(tr->langopts.numbers != 0)
+	{
+		return(TranslateNumber_1(tr, word1, ph_out, flags, wtab, control));
+	}
+	return(0);
+}  // end of TranslateNumber
+

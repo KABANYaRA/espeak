@@ -314,8 +314,8 @@ int HashDictionary(const char *string)
 
 
 
-char *EncodePhonemes(char *p, char *outptr, unsigned char *bad_phoneme)
-/*********************************************************************/
+const char *EncodePhonemes(const char *p, char *outptr, unsigned char *bad_phoneme)
+/***************************************************************************/
 /* Translate a phoneme string from ascii mnemonics to internal phoneme numbers,
    from 'p' up to next blank .
    Returns advanced 'p'
@@ -327,7 +327,8 @@ char *EncodePhonemes(char *p, char *outptr, unsigned char *bad_phoneme)
 	int  max;      /* highest num. of matching found so far */
 	int  max_ph;   /* corresponding phoneme with highest matching */
 
-	bad_phoneme[0] = 0;
+	if(bad_phoneme != NULL)
+		bad_phoneme[0] = 0;
 
 	// skip initial blanks
 	while(isspace(*p))
@@ -387,8 +388,11 @@ char *EncodePhonemes(char *p, char *outptr, unsigned char *bad_phoneme)
 			if(max_ph == 0)
 			{
 				// not recognised, report and ignore
-				bad_phoneme[0] = *p;
-				bad_phoneme[1] = 0;
+				if(bad_phoneme != NULL)
+				{
+					bad_phoneme[0] = *p;
+					bad_phoneme[1] = 0;
+				}
 				*outptr++ = 0;
 				return(p+1);
 			}
