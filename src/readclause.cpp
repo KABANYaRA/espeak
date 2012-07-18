@@ -60,12 +60,6 @@ static int audio_text=0;    // set during <audio> ... </audio>
 static int clear_skipping_text = 0;  // next clause should clear the skipping_text flag
 int count_characters = 0;
 
-// ignore these characters
-static const unsigned short chars_ignore[] = {
-  0x200c,  // zero width non-joiner
-  0x200d,  // zero width joiner
-  0 };
-
 // punctuations symbols that can end a clause
 static const unsigned short punct_chars[] = {',','.','?','!',':',';',
   0x2013,  // en-dash
@@ -975,10 +969,14 @@ f_input = f_in;  // for GetC etc
 				c2 = ' ';
 			}
 
-			if(lookupwchar(chars_ignore,c1))
+			if((j = lookupwchar2(tr->chars_ignore,c1)) != 0)
 			{
-				// ignore this character (eg. zero-width-non-joiner U+200C)
-				continue;
+				if(j == 1)
+				{
+					// ignore this character (eg. zero-width-non-joiner U+200C)
+					continue;
+				}
+				c1 = j;   // replace the character
 			}
 
 			if(c1 == 0xf0b)
