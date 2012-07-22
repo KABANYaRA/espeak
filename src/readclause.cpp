@@ -2324,6 +2324,7 @@ f_input = f_in;  // for GetC etc
 				c2 = ' ';
 			}
 
+			int j;
 			if((j = lookupwchar2(tr->chars_ignore,c1)) != 0)
 			{
 				if(j == 1)
