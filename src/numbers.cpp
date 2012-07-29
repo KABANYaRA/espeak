@@ -1941,19 +1941,5 @@ int TranslateNumber(Translator *tr, char *word, char *ph_out, unsigned int *flag
 	if(skipwords)
 		dictionary_skipwords = skipwords;
 	return(1);
-}  // end of TranslateNumber_1
-
-
-
-int TranslateNumber(Translator *tr, char *word1, char *ph_out, unsigned int *flags, WORD_TAB *wtab, int control)
-{//=============================================================================================================
-	if((option_sayas == SAYAS_DIGITS1) || (wtab[0].flags & FLAG_INDIVIDUAL_DIGITS))
-		return(0);  // speak digits individually
-
-	if(tr->langopts.numbers != 0)
-	{
-		return(TranslateNumber_1(tr, word1, ph_out, flags, wtab, control));
-	}
-	return(0);
 }  // end of TranslateNumber
 
