@@ -22,7 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+
+#include "speech.h"
 #include "sonic.h"
+#ifdef INCLUDE_SONIC
 
 struct sonicStreamStruct {
     short *inputBuffer;
@@ -945,3 +948,4 @@ int sonicChangeShortSpeed(
     sonicDestroyStream(stream);
     return numSamples;
 }
+#endif  // INCLUDE_SONIC
