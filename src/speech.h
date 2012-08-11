@@ -22,6 +22,21 @@
 
 #include <sys/types.h>
 
+// conditional compilation options
+#define INCLUDE_MBROLA
+#define INCLUDE_SONIC
+
+#if defined(BYTE_ORDER) && BYTE_ORDER == BIG_ENDIAN
+#define ARCH_BIG
+#endif
+
+#ifdef __QNX__
+#define NEED_GETOPT
+#define NO_VARIADIC_MACROS
+#endif
+
+
+#define PLATFORM_POSIX
 #define PATHSEP  '/'
 #define USE_NANOSLEEP
 #define __cdecl 

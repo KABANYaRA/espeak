@@ -1157,6 +1157,7 @@ void DoPhonemeMarker(int type, int char_posn, int length, char *name)
 }  // end of DoMarker
 
 
+#ifdef INCLUDE_SONIC
 void DoSonicSpeed(int value)
 {//=========================
 // value, multiplier * 1024
@@ -1164,6 +1165,7 @@ void DoSonicSpeed(int value)
 	wcmdq[wcmdq_tail][1] = value;
 	WcmdqInc();
 }  // end of DoSonicSpeed
+#endif
 
 
 void DoVoiceChange(voice_t *v)
