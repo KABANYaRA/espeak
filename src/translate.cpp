@@ -370,7 +370,7 @@ int IsAlpha(unsigned int c)
 {//========================
 // Replacement for iswalph() which also checks for some in-word symbols
 
-	const unsigned short extra_indic_alphas[] = {
+	static const unsigned short extra_indic_alphas[] = {
 	0xa70,0xa71,	// Gurmukhi: tippi, addak
 	0 };
 
@@ -978,7 +978,7 @@ if((wmark > 0) && (wmark < 8))
 			found = TranslateNumber(tr, word1, phonemes, dictionary_flags, wtab, 0);
 		}
 
-		if(!found & ((wflags & FLAG_UPPERS) != FLAG_FIRST_UPPER))
+		if(!found && ((wflags & FLAG_UPPERS) != FLAG_FIRST_UPPER))
 		{
 			// either all upper or all lower case
 

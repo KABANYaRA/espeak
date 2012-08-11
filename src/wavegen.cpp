@@ -32,7 +32,10 @@
 #include "phoneme.h"
 #include "synthesize.h"
 #include "voice.h"
+
+#ifdef INCLUDE_SONIC
 #include "sonic.h"
+#endif
 
 #ifdef USE_PORTAUDIO
 #include "portaudio.h"
@@ -146,8 +149,10 @@ static PortAudioStream *pa_stream=NULL;
 static PaStream *pa_stream=NULL;
 #endif
 
+#ifdef INCLUDE_SONIC
 static sonicStream sonicSpeedupStream = NULL;
 double sonicSpeed = 1.0;
+#endif
 
 // 1st index=roughness
 // 2nd index=modulation_type
@@ -291,11 +296,15 @@ void WcmdqStop()
 {//=============
 	wcmdq_head = 0;
 	wcmdq_tail = 0;
+
+#ifdef INCLUDE_SONIC
 	if(sonicSpeedupStream != NULL)
 	{
 		sonicDestroyStream(sonicSpeedupStream);
 		sonicSpeedupStream = NULL;
 	}
+#endif
+
 #ifdef USE_PORTAUDIO
 	Pa_AbortStream(pa_stream);
 #endif
@@ -1775,14 +1784,18 @@ int WavegenFill2()
 			}
 			wdata.n_mix_wavefile = 0;
 			wdata.amplitude_fmt = 100;
+#ifdef INCLUDE_KLATT
 			KlattReset(1);
+#endif
 			result = PlaySilence(length,resume);
 			break;
 
 		case WCMD_WAVE:
 			echo_complete = echo_length;
 			wdata.n_mix_wavefile = 0;
+#ifdef INCLUDE_KLATT
 			KlattReset(1);
+#endif
 			result = PlayWave(length,resume,(unsigned char*)q[2], q[3] & 0xff, q[3] >> 8);
 			break;
 
@@ -1850,9 +1863,11 @@ int WavegenFill2()
 				wdata.amplitude_fmt = 100;  // percentage, but value=0 means 100%
 			break;
 
+#ifdef INCLUDE_SONIC
 		case WCMD_SONIC_SPEED:
 			sonicSpeed = (double)q[1] / 1024;
 			break;
+#endif
 		}
 
 		if(result==0)
@@ -1870,6 +1885,7 @@ int WavegenFill2()
 }  // end of WavegenFill2
 
 
+#ifdef INCLUDE_SONIC
 /* Speed up the audio samples with libsonic. */
 static int SpeedUp(short *outbuf, int length_in, int length_out, int end_of_text)
 {//==============================================================================
@@ -1896,15 +1912,16 @@ static int SpeedUp(short *outbuf, int length_in, int length_out, int end_of_text
 	}
 	return sonicReadShortFromStream(sonicSpeedupStream, outbuf, length_out);
 }  // end of SpeedUp
+#endif
 
 
 /* Call WavegenFill2, and then speed up the output samples. */
 int WavegenFill()
 {//============================
 	unsigned char *p_start = out_ptr;
-
 	int finished = WavegenFill2();
 
+#ifdef INCLUDE_SONIC
 	if(sonicSpeed > 1.0)
 	{
 		int max_length = (out_end - p_start);
@@ -1914,5 +1931,6 @@ int WavegenFill()
 		if(length >= max_length)
 			finished = 0;   // there may be more data to flush
 	}
+#endif
 	return finished;
 }  // end of WavegenFill
