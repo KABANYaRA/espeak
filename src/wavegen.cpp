@@ -131,13 +131,6 @@ int current_source_index=0;
 
 extern FILE *f_wave;
 
-#if (USE_PORTAUDIO == 18)
-static PortAudioStream *pa_stream=NULL;
-#endif
-#if (USE_PORTAUDIO == 19)
-static PaStream *pa_stream=NULL;
-#endif
-
 #ifdef INCLUDE_SONIC
 static sonicStream sonicSpeedupStream = NULL;
 double sonicSpeed = 1.0;
@@ -293,9 +286,6 @@ void WcmdqStop()
 	}
 #endif
 
-#ifdef USE_PORTAUDIO
-	Pa_AbortStream(pa_stream);
-#endif
 	if(mbrola_name[0] != 0)
 		MbrolaReset();
 }
