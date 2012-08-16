@@ -201,15 +201,7 @@ typedef struct {
 } PHONEME_LIST2;
 
 
-typedef struct {
-// The first section is a copy of PHONEME_LIST2
-	unsigned char phcode;
-	unsigned char stresslevel;
-	unsigned char wordstress;  // the highest level stress in this word
-	unsigned char tone_ph;    // tone phoneme to use with this vowel
-	unsigned short synthflags;
-	unsigned short sourceix;  // ix into the original source text string, only set at the start of a word
-
+struct PHONEME_LIST : public PHONEME_LIST2 {
 	PHONEME_TAB *ph;
 	short length;  // length_mod
 	unsigned char env;    // pitch envelope number
@@ -220,7 +212,7 @@ typedef struct {
 	unsigned char newword;   // bit 0=start of word, bit 1=end of clause, bit 2=start of sentence
 	unsigned char pitch1;
 	unsigned char pitch2;
-} PHONEME_LIST;
+};
 
 
 #define pd_FMT    0
