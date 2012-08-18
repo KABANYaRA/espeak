@@ -29,27 +29,24 @@ CXXFLAGS = -O2 -Wall -c
 CPPFLAGS = -pedantic -fno-exceptions -D PATH_ESPEAK_DATA=\"$(DATADIR)\" -D COMMITID=\"$(COMMITID)\"
 
 .cpp.o:
-	# Compiling $@
 	$(CXX) $(CXXFLAGS) $(USE_AUDIO) -I. $(CPPFLAGS) $<
 
 x_%.o: %.cpp
-	# Compiling $@
 	$(CXX) $(CXXFLAGS) $(USE_AUDIO) -fpic -fvisibility=hidden \
 	-I. -D LIBRARY $(CPPFLAGS) $< -o x_$*.o
 
 all: $(LIBESPEAK) $(STATIC_LIBESPEAK) $(ESPEAKEDIT)
 
-common_SOURCES = compiledict.cpp dictionary.cpp intonation.cpp \
+common_SOURCE = compiledict.cpp dictionary.cpp intonation.cpp \
 	klatt.cpp mbrowrap.cpp numbers.cpp readclause.cpp \
 	phonemelist.cpp setlengths.cpp sonic.cpp \
 	synthdata.cpp synthesize.cpp synth_mbrola.cpp \
 	translate.cpp tr_languages.cpp voices.cpp wavegen.cpp 
 
-libespeak_SOURCES = speak_lib.cpp $(common_SOURCES)
-libespeak_OBJS = $(patsubst %.cpp,x_%.o,$(libespeak_SOURCES))
-libespeak_LIBS = -lstdc++ -lpthread
+libespeak_SOURCE = speak_lib.cpp $(common_SOURCE)
+libespeak_OBJS = ${libespeak_SOURCE:%.cpp=x_%.o}
+libespeak_LIBS = -lstdc++ $(LIB_AUDIO) -lpthread
 $(LIBESPEAK): $(libespeak_OBJS)
-	# Linking $@
 	$(CXX) $(LDFLAGS) -shared $(SONAME_OPT)$(LIBESPEAK).$(LIB_VERSION) -o $@ \
 	$(libespeak_OBJS) $(libespeak_LIBS)
 	mv $(LIBESPEAK) $(LIBESPEAK).$(LIBTAG)
@@ -57,7 +54,6 @@ $(LIBESPEAK): $(libespeak_OBJS)
 	$(LN_SF) $(LIBESPEAK).$(LIB_VERSION) $(LIBESPEAK)
 
 $(STATIC_LIBESPEAK): $(libespeak_OBJS)
-	# Linking $@
 	$(AR) cqs $(STATIC_LIBESPEAK) $(libespeak_OBJS)
 
 
@@ -69,14 +65,10 @@ distclean: clean
 	rm -f $(STATIC_LIBESPEAK)
 
 install: all
-	# Create directories
 	$(MKDIR) $(DESTDIR)$(LIBDIR)
 	$(MKDIR) $(DESTDIR)$(INCDIR)
-	# Install shared library
 	$(INSTALL) -m 755 $(LIBESPEAK).$(LIBTAG) $(DESTDIR)$(LIBDIR)
-	# Install static library
 	$(INSTALL) -m 755 $(STATIC_LIBESPEAK) $(DESTDIR)$(LIBDIR)
 	$(LN_SF) $(LIBESPEAK).$(LIBTAG) $(DESTDIR)$(LIBDIR)/$(LIBESPEAK).$(LIB_VERSION)
 	$(LN_SF) $(LIBESPEAK).$(LIB_VERSION) $(DESTDIR)$(LIBDIR)/$(LIBESPEAK)
-	# Install development headers
 	$(INSTALL) -pm 644 speak_lib.h $(DESTDIR)$(INCDIR)

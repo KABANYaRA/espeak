@@ -6,6 +6,19 @@ DATADIR=$(PREFIX)/share/espeak-data
 
 .PHONY: all clean distclean
 
+EXTRA_DIST=
+
+##### ChangeLog:
+
+ChangeLog:
+	git log > ChangeLog
+
+dist-hook: ChangeLog
+
+.PHONY: ChangeLog
+
+EXTRA_DIST += ChangeLog
+
 ##### standard build actions:
 
 all: src/libespeak.so src/libespeak.a docs/speak_lib.h
@@ -22,7 +35,7 @@ distclean: clean
 
 ##### build targets:
 
-common_SOURCES = \
+common_SOURCE = \
 	src/compiledict.cpp \
 	src/dictionary.cpp \
 	src/intonation.cpp \
@@ -41,14 +54,14 @@ common_SOURCES = \
 	src/voices.cpp \
 	src/wavegen.cpp 
 
-libespeak_SOURCES = \
-	src/speak_lib.cpp \
+libespeak_SOURCE = \
+	src/speak_lib.cpp
 
 docs/speak_lib.h: src/speak_lib.h
 	cp $< $@
 
-src/libespeak.a: $(common_SOURCES) $(libespeak_SOURCES)
+src/libespeak.a: $(common_SOURCE) $(libespeak_SOURCE)
 	cd src && make libespeak.a PREFIX=$(PREFIX) && cd ..
 
-src/libespeak.so: $(common_SOURCES) $(libespeak_SOURCES)
+src/libespeak.so: $(common_SOURCE) $(libespeak_SOURCE)
 	cd src && make libespeak.so PREFIX=$(PREFIX) && cd ..
