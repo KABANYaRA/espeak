@@ -25,7 +25,6 @@ all: src/libespeak.so src/libespeak.a docs/speak_lib.h
 
 install: all
 	cd src && make DESTDIR=$(DESTDIR) PREFIX=$(PREFIX) BINDIR=$(BINDIR) INCDIR=$(INCDIR) LIBDIR=$(LIBDIR) install && cd ..
-	install -m 755 src/espeakedit $(DESTDIR)$(BINDIR)
 
 clean:
 	cd src && rm -f *.o *~ && cd ..
