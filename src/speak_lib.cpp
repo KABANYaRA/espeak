@@ -167,7 +167,7 @@ static espeak_ERROR Synthesize(const void *text, int flags)
 		espeak_SetVoiceByName("default");
 	}
 
-	SpeakNextClause(NULL,text,0);
+	SpeakNextClause(text,0);
 
 	for(;;)
 	{
@@ -185,7 +185,7 @@ static espeak_ERROR Synthesize(const void *text, int flags)
 		count_buffers++;
 		if(synth_callback((short *)outbuf, length, event_list))
 		{
-			SpeakNextClause(NULL,0,2);  // stop
+			SpeakNextClause(0,2);  // stop
 			break;
 		}
 
@@ -200,7 +200,7 @@ static espeak_ERROR Synthesize(const void *text, int flags)
 				event_list[0].unique_identifier = 0;
 				event_list[0].user_data = my_user_data;
 
-				if(SpeakNextClause(NULL,NULL,1)==0)
+				if(SpeakNextClause(NULL,1)==0)
 				{
 					synth_callback(NULL, 0, event_list);  // NULL buffer ptr indicates end of data
 					break;

@@ -1705,13 +1705,13 @@ static int timer_on = 0;
 static int paused = 0;
 
 
-int SpeakNextClause(FILE *f_in, const void *text_in, int control)
+int SpeakNextClause(const void *text_in, int control)
 {//==============================================================
-// Speak text from file (f_in) or memory (text_in)
+// Speak text from memory (text_in)
 // control 0: start
-//    either f_in or text_in is set, the other must be NULL
+//    text_in is set, otherwise it must be NULL
 
-// The other calls have f_in and text_in = NULL
+// The other calls have text_in = NULL
 // control 1: speak next text
 //         2: stop
 //         3: pause (toggle)
@@ -1720,12 +1720,11 @@ int SpeakNextClause(FILE *f_in, const void *text_in, int control)
 
 	int clause_tone;
 	char *voice_change;
-	static FILE *f_text=NULL;
 	static const void *p_text=NULL;
 
 	if(control == 4)
 	{
-		if((f_text == NULL) && (p_text == NULL))
+		if(p_text == NULL)
 			return(0);
 		else
 			return(1);
@@ -1736,11 +1735,6 @@ int SpeakNextClause(FILE *f_in, const void *text_in, int control)
 		// stop speaking
 		timer_on = 0;
 		p_text = NULL;
-		if(f_text != NULL)
-		{
-			fclose(f_text);
-			f_text=NULL;
-		}
 		n_phoneme_list = 0;
 		WcmdqStop();
 
@@ -1773,26 +1767,17 @@ int SpeakNextClause(FILE *f_in, const void *text_in, int control)
 		return(0);
 	}
 
-	if((f_in != NULL) || (text_in != NULL))
+	if(text_in != NULL)
 	{
-		f_text = f_in;
 		p_text = text_in;
 		timer_on = 1;
 		paused = 0;
 	}
 
-	if((f_text==NULL) && (p_text==NULL))
+	if(p_text==NULL)
 	{
 		skipping_text = 0;
 		timer_on = 0;
-		return(0);
-	}
-
-	if((f_text != NULL) && feof(f_text))
-	{
-		timer_on = 0;
-		fclose(f_text);
-		f_text=NULL;
 		return(0);
 	}
 
@@ -1803,7 +1788,7 @@ int SpeakNextClause(FILE *f_in, const void *text_in, int control)
 
 	// read the next clause from the input text file, translate it, and generate
 	// entries in the wavegen command queue
-	p_text = TranslateClause(translator, f_text, p_text, &clause_tone, &voice_change);
+	p_text = TranslateClause(translator, NULL, p_text, &clause_tone, &voice_change);
 
 	CalcPitches(translator, clause_tone);
 	CalcLengths(translator);
