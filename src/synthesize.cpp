@@ -1788,7 +1788,7 @@ int SpeakNextClause(const void *text_in, int control)
 
 	// read the next clause from the input text file, translate it, and generate
 	// entries in the wavegen command queue
-	p_text = TranslateClause(translator, NULL, p_text, &clause_tone, &voice_change);
+	p_text = TranslateClause(translator, p_text, &clause_tone, &voice_change);
 
 	CalcPitches(translator, clause_tone);
 	CalcLengths(translator);

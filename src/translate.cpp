@@ -2268,7 +2268,7 @@ static int TranslateChar(Translator *tr, char *ptr, int prev_in, unsigned int c,
 }
 
 
-void *TranslateClause(Translator *tr, FILE *f_text, const void *vp_input, int *tone_out, char **voice_change)
+void *TranslateClause(Translator *tr, const void *vp_input, int *tone_out, char **voice_change)
 {//==========================================================================================================
 	int c;
 	int cc;
@@ -2324,7 +2324,7 @@ void *TranslateClause(Translator *tr, FILE *f_text, const void *vp_input, int *t
 
 	for(int ix=0; ix<N_TR_SOURCE; ix++)
 		charix[ix] = 0;
-	terminator = ReadClause(tr, f_text, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name);
+	terminator = ReadClause(tr, source, charix, &charix_top, N_TR_SOURCE, &tone2, voice_change_name);
 
 p = source;
 
