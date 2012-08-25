@@ -91,23 +91,6 @@ extern int embedded_default[N_EMBEDDED_VALUES];
 
 
 
-typedef struct {  // 64 bytes
-	short frflags;
-	short ffreq[7];
-	unsigned char length;
-	unsigned char rms;
-	unsigned char fheight[8];
-	unsigned char fwidth[6];          // width/4  f0-5
-	unsigned char fright[3];          // width/4  f0-2
-	unsigned char bw[4];        // Klatt bandwidth BNZ /2, f1,f2,f3
-	unsigned char klattp[5];    // AV, FNZ, Tilt, Aspr, Skew
-	unsigned char klattp2[5];   // continuation of klattp[],  Avp, Fric, FricBP, Turb
-	unsigned char klatt_ap[7];  // Klatt parallel amplitude
-	unsigned char klatt_bp[7];  // Klatt parallel bandwidth  /2
-	unsigned char spare;        // pad to multiple of 4 bytes
-} frame_t;   //  with extra Klatt parameters for parallel resonators
-
-
 typedef struct {  // 44 bytes
 	short frflags;
 	short ffreq[7];
@@ -120,6 +103,14 @@ typedef struct {  // 44 bytes
 	unsigned char klattp[5];    // AV, FNZ, Tilt, Aspr, Skew
 } frame_t2;   //  without the extra Klatt parameters
 
+
+
+struct frame_t : public frame_t2 {  // 64 bytes
+	unsigned char klattp2[5];   // continuation of klattp[],  Avp, Fric, FricBP, Turb
+	unsigned char klatt_ap[7];  // Klatt parallel amplitude
+	unsigned char klatt_bp[7];  // Klatt parallel bandwidth  /2
+	unsigned char spare;        // pad to multiple of 4 bytes
+};      //  with extra Klatt parameters for parallel resonators
 
 
 // formant data used by wavegen
