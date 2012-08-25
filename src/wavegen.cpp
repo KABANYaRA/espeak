@@ -1767,7 +1767,6 @@ int WavegenFill2()
 			return(1);              // queue empty, close sound channel
 		}
 
-		int result = 0;
 		long64 *q = wcmdq[wcmdq_head];
 		int length = q[1];
 
@@ -1787,7 +1786,7 @@ int WavegenFill2()
 #ifdef INCLUDE_KLATT
 			KlattReset(1);
 #endif
-			result = PlaySilence(length,resume);
+			resume = PlaySilence(length,resume);
 			break;
 
 		case WCMD_WAVE:
@@ -1796,7 +1795,7 @@ int WavegenFill2()
 #ifdef INCLUDE_KLATT
 			KlattReset(1);
 #endif
-			result = PlayWave(length,resume,(unsigned char*)q[2], q[3] & 0xff, q[3] >> 8);
+			resume = PlayWave(length,resume,(unsigned char*)q[2], q[3] & 0xff, q[3] >> 8);
 			break;
 
 		case WCMD_WAVE2:
@@ -1819,14 +1818,14 @@ int WavegenFill2()
 			wdata.n_mix_wavefile = 0;   // ... and drop through to WCMD_SPECT case
 		case WCMD_SPECT:
 			echo_complete = echo_length;
-			result = Wavegen2(length & 0xffff,q[1] >> 16,resume,(frame_t *)q[2],(frame_t *)q[3]);
+			resume = Wavegen2(length & 0xffff,q[1] >> 16,resume,(frame_t *)q[2],(frame_t *)q[3]);
 			break;
 
 		case WCMD_KLATT2:   // as WCMD_SPECT but stop any concurrent wave file
 			wdata.n_mix_wavefile = 0;   // ... and drop through to WCMD_SPECT case
 		case WCMD_KLATT:
 			echo_complete = echo_length;
-			result = Wavegen_Klatt2(length & 0xffff,q[1] >> 16,resume,(frame_t *)q[2],(frame_t *)q[3]);
+			resume = Wavegen_Klatt2(length & 0xffff,q[1] >> 16,resume,(frame_t *)q[2],(frame_t *)q[3]);
 			break;
 
 		case WCMD_MARKER:
@@ -1855,7 +1854,7 @@ int WavegenFill2()
 			break;
 
 		case WCMD_MBROLA_DATA:
-			result = MbrolaFill(length, resume, (general_amplitude * wvoice->voicing)/64);
+			resume = MbrolaFill(length, resume, (general_amplitude * wvoice->voicing)/64);
 			break;
 
 		case WCMD_FMT_AMPLITUDE:
@@ -1870,14 +1869,9 @@ int WavegenFill2()
 #endif
 		}
 
-		if(result==0)
+		if(resume==0)
 		{
 			WcmdqIncHead();
-			resume=0;
-		}
-		else
-		{
-			resume=1;
 		}
 	}
 
