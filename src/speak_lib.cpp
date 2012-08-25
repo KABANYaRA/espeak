@@ -541,7 +541,7 @@ static const char* label[] = {
 #endif
 
 
-void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *out_ptr)
+void MarkerEvent(espeak_EVENT_TYPE type, unsigned int char_position, int value, int value2, unsigned char *out_ptr)
 {//==================================================================================================
 	// type: 1=word, 2=sentence, 3=named mark, 4=play audio, 5=end, 7=phoneme
 	ENTER("MarkerEvent");
@@ -550,7 +550,7 @@ void MarkerEvent(int type, unsigned int char_position, int value, int value2, un
 		return;
 	
 	espeak_EVENT *ep = &event_list[event_list_ix++];
-	ep->type = (espeak_EVENT_TYPE)type;
+	ep->type = type;
 	ep->unique_identifier = my_unique_identifier;
 	ep->user_data = my_user_data;
 	ep->text_position = char_position & 0xffffff;

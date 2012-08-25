@@ -460,7 +460,7 @@ int  WavegenInitSound();
 void WavegenInit(int rate, int wavemult_fact);
 float polint(float xa[],float ya[],int n,float x);
 int WavegenFill();
-void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *out_ptr);
+void MarkerEvent(espeak_EVENT_TYPE type, unsigned int char_position, int value, int value2, unsigned char *out_ptr);
 
 
 extern unsigned char *wavefile_data;

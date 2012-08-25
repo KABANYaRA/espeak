@@ -1749,7 +1749,7 @@ int WavegenFill2()
 // return: 0  output buffer has been filled
 // return: 1  input command queue is now empty
 
-	int marker_type;
+	espeak_EVENT_TYPE marker_type;
 	static int resume=0;
 	static int echo_complete=0;
 
@@ -1829,7 +1829,7 @@ int WavegenFill2()
 			break;
 
 		case WCMD_MARKER:
-			marker_type = q[0] >> 8;
+			marker_type = (espeak_EVENT_TYPE)(q[0] >> 8);
 			MarkerEvent(marker_type, q[1],q[2],q[3],out_ptr);
 #ifdef LOG_FRAMES
 			LogMarker(marker_type, q[2], q[3]);
